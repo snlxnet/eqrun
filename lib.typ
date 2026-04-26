@@ -84,27 +84,23 @@
 
   (left-side, right-side)
 }
-left: #left-side
-
-right: #right-side
 
 #let tokens = right-side.map(token => {
   if token.func() == math.attach {
     parse-attach(token)
   } else if token.func() == math.root {
     parse-root(token)
+  } else {
+    token.text
   }
-})
-
-parsed: #tokens
+}).join(" ")
 
 #let vars = (
-  base-bottom: 16,
   a: 2,
-  a-tau-b: 1,
-  a-tau: 0,
+  b-t: 22,
+  x: 256,
 )
 
-sqrt 4: #parse-root($root(3, 8)$.body) \
-sqrt a: #parse-root($sqrt(a)$.body) \
-sqrt a^2: #parse-root($sqrt(a^2)$.body)
+Given #vars
+
+#expr = #eval(tokens, scope: (vars: vars))
