@@ -110,7 +110,11 @@
       parse-root(token)
     } else if token.func() == math.lr {
       parse-tokens(token.body.children)
-      // ( code: "", math: "", )
+    } else if token.text == "/" {
+      (
+        code: "/",
+        math: "\\/",
+      )
     } else {
       (
         code: token.text,
