@@ -77,7 +77,7 @@
 }
 
 #let precision = 3 // digits after the dot
-#let expr = $P = (a_"ok" + b_"broken" + sqrt(c)) \/ Delta_tau^5$
+#let expr = $P = (a_"ok" + b_"broken" + sqrt(c)) / Delta_tau^5$
 #let tokens = expr.body.children
 #tokens
 #let (left-side, right-side) = {
@@ -110,6 +110,13 @@
       parse-root(token)
     } else if token.func() == math.lr {
       parse-tokens(token.body.children)
+    } else if token.func() == math.frac {
+      let num = parse-tokens(if token.num.has("children") { token.num.children } else { (token.num,) })
+      let den = parse-tokens(if token.denom.has("children") { token.denom.children } else { (token.denom,) })
+      (
+        code: "(" + num.map(i => i.code).join(" ") + ")/(" + den.map(i => i.code).join(" ") + ")",
+        math: "(" + num.map(i => i.math).join(" ") + ")/(" + den.map(i => i.math).join(" ") + ")",
+      )
     } else if token.text == "/" {
       (
         code: "/",
