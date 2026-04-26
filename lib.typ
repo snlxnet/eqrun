@@ -20,24 +20,24 @@
 }
 #let parse-attach(input) = {
   let name = "vars." + if input.has("b") {
-    input.base.text + "-" + sym-name(input.b.text)
+    sym-name(input.base.text) + "-" + sym-name(input.b.text)
   } else {
-    input.base.text
+    sym-name(input.base.text)
   }
 
   if not input.has("t") {
-    return (code: name, math: "#" + name)
+    return (code: name, math: "#cleanup(" + name + ")")
   }
 
   if is-number(input.t) {
     (
       code: "calc.pow(" + name + ", " + input.t.text + ")",
-      math: "#str(" + name + ")^(" + input.t.text + ")",
+      math: "#cleanup(" + name + ")^(" + input.t.text + ")",
     )
   } else {
     (
       code: name + "-" + sym-name(input.t),
-      math: "#str(" + name + "-" + sym-name(input.t) + ")",
+      math: "#cleanup(" + name + "-" + sym-name(input.t) + ")",
     )
   }
 }
@@ -50,7 +50,7 @@
   } else {
     (
       code: "vars." + input.text,
-      math: "#str(vars." + input.text + ")",
+      math: "#cleanup(vars." + input.text + ")",
     )
   }
 }
@@ -76,8 +76,10 @@
   )
 }
 
-#let expr = $P = a^2 + b_t + sqrt(x)$
-#let tokens = expr.body.children.filter(elem => elem != [ ])
+#let precision = 3 // digits after the dot
+#let expr = $P = (a_"ok" + b_"broken" + sqrt(c)) \/ Delta_tau^5$
+#let tokens = expr.body.children
+#tokens
 #let (left-side, right-side) = {
   let left-side = ()
   let right-side = ()
@@ -100,27 +102,53 @@
   (left-side, right-side)
 }
 
-#let tokens = right-side.map(token => {
-  if token.func() == math.attach {
-    parse-attach(token)
-  } else if token.func() == math.root {
-    parse-root(token)
-  } else {
-    (
-      code: token.text,
-      math: token.text,
-    )
-  }
-})
+#let parse-tokens(tokens) = {
+  tokens.filter(elem => elem != [ ]).map(token => {
+    if token.func() == math.attach {
+      parse-attach(token)
+    } else if token.func() == math.root {
+      parse-root(token)
+    } else if token.func() == math.lr {
+      parse-tokens(token.body.children)
+      // ( code: "", math: "", )
+    } else {
+      (
+        code: token.text,
+        math: token.text,
+      )
+    }
+  }).flatten()
+}
+#let tokens = parse-tokens(right-side)
 #let code = tokens.map(token => token.code).join(" ")
 #let values = tokens.map(token => token.math).join(" ")
 
 #let vars = (
-  a: 2,
-  b-t: 22,
-  x: 256,
+  a-ok: 5.1,
+  b-broken: 6,
+  c: 7,
+  Delta-tau: 1,
 )
 
-Given #vars
+= Given
+#vars
 
-$#expr = #eval(values, mode: "math", scope: (vars: vars)) = #eval(code, scope: (vars: vars))$
+= Calculation
+
+$
+  #expr
+  =
+  #eval(
+    values,
+    mode: "math",
+    scope: (
+      cleanup: (val) => str(calc.round(val, digits: precision)),
+      vars: vars,
+    ),
+  )
+  =
+  #calc.round(eval(code, scope: (vars: vars)), digits: precision)
+$
+
+= Debugging info
+#tokens
