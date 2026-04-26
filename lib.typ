@@ -4,10 +4,13 @@
 #let sym-name(symbol) = {
   import "./greek.typ": greek
 
+  if type(symbol) == "content" {
+    symbol = symbol.text
+  }
   let match = greek.find(((key, val)) => val == symbol)
 
   if match == none {
-    symbol.text
+    symbol
   } else {
     match.at(0)
   }
@@ -57,12 +60,13 @@ left: #left-side
 
 right: #right-side
 
-#for token in right-side {
+#let tokens = right-side.map(token => {
   if token.func() == math.attach {
-    // parse-attach(token)
-    (token,)
+    parse-attach(token)
   }
-}
+})
+
+parsed: #tokens
 
 #let vars = (
   base-bottom: 16,
@@ -70,7 +74,3 @@ right: #right-side
   a-tau-b: 1,
   a-tau: 0,
 )
-
-#eval(parse-attach($a^2$.body), scope: (vars: vars))
-#eval(parse-attach($a_tau$.body), scope: (vars: vars))
-#eval(parse-attach($a_tau^b$.body), scope: (vars: vars))
