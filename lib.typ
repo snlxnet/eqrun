@@ -19,10 +19,6 @@
   }
 }
 #let parse-attach(input) = {
-  if not input.has("base") {
-    return input.text
-  }
-
   let name = "vars." + if input.has("b") {
     input.base.text + "-" + sym-name(input.b.text)
   } else {
@@ -30,20 +26,32 @@
   }
 
   if not input.has("t") {
-    return name
+    return (code: name, math: "#" + name)
   }
 
   if is-number(input.t) {
-    "calc.pow(" + name + ", " + input.t.text + ")"
+    (
+      code: "calc.pow(" + name + ", " + input.t.text + ")",
+      math: "#str(" + name + ")^(" + input.t.text + ")",
+    )
   } else {
-    name + "-" + sym-name(input.t)
+    (
+      code: name + "-" + sym-name(input.t),
+      math: "#str(" + name + "-" + sym-name(input.t) + ")",
+    )
   }
 }
 #let parse-word(input) = {
   if is-number(input) {
-    return input.text
+    (
+      code: input.text,
+      math: input.text,
+    )
   } else {
-    return "vars." + input.text
+    (
+      code: "vars." + input.text,
+      math: "#str(vars." + input.text + ")",
+    )
   }
 }
 // undividable, either an attach or a word
@@ -58,7 +66,14 @@
   let index = parse-atom(if input.has("index") { input.index } else { [2] })
   let radicand = parse-atom(input.radicand)
 
-  "calc.root(" + radicand + ", " + index + ")"
+  (
+    code: "calc.root(" + radicand.code + ", " + index.code + ")",
+    math: if input.has("index") {
+      "root(" + index.math + ", " + radicand.math + ")"
+    } else {
+      "sqrt(" + radicand.math + ")"
+    },
+  )
 }
 
 #let expr = $P = a^2 + b_t + sqrt(x)$
@@ -91,9 +106,14 @@
   } else if token.func() == math.root {
     parse-root(token)
   } else {
-    token.text
+    (
+      code: token.text,
+      math: token.text,
+    )
   }
-}).join(" ")
+})
+#let code = tokens.map(token => token.code).join(" ")
+#let values = tokens.map(token => token.math).join(" ")
 
 #let vars = (
   a: 2,
@@ -103,4 +123,4 @@
 
 Given #vars
 
-#expr = #eval(tokens, scope: (vars: vars))
+$#expr = #eval(values, mode: "math", scope: (vars: vars)) = #eval(code, scope: (vars: vars))$
