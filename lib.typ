@@ -1,8 +1,3 @@
-#set page(paper: "a5")
-#set text(font: "JetBrainsMono NF")
-#import "@preview/catppuccin:1.1.0": catppuccin, flavors
-#show: catppuccin.with(flavors.mocha)
-
 #let is-number(content) = regex("^\\d+$") in content.text
 #let sym-name(symbol) = {
   import "./greek.typ": greek
@@ -75,33 +70,6 @@
     },
   )
 }
-
-#let precision = 3 // digits after the dot
-#let expr = $P = (a_"ok" + b_"broken" + sqrt(c)) / Delta_tau^5$
-#let tokens = expr.body.children
-#tokens
-#let (left-side, right-side) = {
-  let left-side = ()
-  let right-side = ()
-  let eq-ahead = true
-
-  for token in tokens {
-    if token == [#math.eq] {
-      eq-ahead = false
-      continue
-    }
-
-    if eq-ahead { left-side.push(token) } else { right-side.push(token) }
-  }
-
-  if eq-ahead {
-    right-side = (..left-side)
-    left-side = ([result],)
-  }
-
-  (left-side, right-side)
-}
-
 #let parse-tokens(tokens) = {
   tokens.filter(elem => elem != [ ]).map(token => {
     if token.func() == math.attach {
@@ -130,36 +98,48 @@
     }
   }).flatten()
 }
-#let tokens = parse-tokens(right-side)
-#let code = tokens.map(token => token.code).join(" ")
-#let values = tokens.map(token => token.math).join(" ")
 
-#let vars = (
-  a-ok: 5.1,
-  b-broken: 6,
-  c: 7,
-  Delta-tau: 1,
-)
+#let eqrun-builder(state) = {
+  (equation, precision: 2) => {
+    let tokens = equation.body.children
 
-= Given
-#vars
+    let (left-side, right-side) = {
+      let left-side = ()
+      let right-side = ()
+      let eq-ahead = true
 
-= Calculation
+      for token in tokens {
+        if token == [#math.eq] {
+          eq-ahead = false
+          continue
+        }
 
-$
-  #expr
-  =
-  #eval(
-    values,
-    mode: "math",
-    scope: (
-      cleanup: (val) => str(calc.round(val, digits: precision)),
-      vars: vars,
-    ),
-  )
-  =
-  #calc.round(eval(code, scope: (vars: vars)), digits: precision)
-$
+        if eq-ahead { left-side.push(token) } else { right-side.push(token) }
+      }
 
-= Debugging info
-#tokens
+      if eq-ahead {
+        right-side = (..left-side)
+        left-side = ([result],)
+      }
+
+      (left-side, right-side)
+    }
+
+    let tokens = parse-tokens(right-side)
+    let code = tokens.map(token => token.code).join(" ")
+    let values = tokens.map(token => token.math).join(" ")
+
+    let values = eval(
+      values,
+      mode: "math",
+      scope: (
+        cleanup: (val) => str(calc.round(val, digits: precision)),
+        vars: state,
+      ),
+    )
+    let result = calc.round(eval(code, scope: (vars: state)), digits: precision)
+
+    $ equation = values = result $
+  }
+}
+
