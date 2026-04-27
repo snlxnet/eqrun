@@ -37,9 +37,14 @@
   }
 }
 #let parse-word(input) = {
-  if is-number(input) or regex("[-+*]") in input.text {
+  if is-number(input) or regex("[-+]") in input.text {
     (
       code: input.text,
+      math: input.text,
+    )
+  } else if regex("[⋅∗×]") in input.text {
+    (
+      code: "*",
       math: input.text,
     )
   } else if input.text == "/" {
@@ -97,8 +102,10 @@
   }).flatten()
 }
 
-#let eqrun-builder(state) = {
-  (equation, precision: 2) => {
+#let eqrun-builder(initial-state) = {
+  let vars = state("eqrun", initial-state)
+
+  let stateless-run(state, equation, precision: 2) = {
     let tokens = equation.body.children
 
     let (left-side, right-side) = {
@@ -124,7 +131,7 @@
     }
 
     let tokens = parse-tokens(right-side)
-    let code = tokens.map(token => token.code).join(" ")
+    let result = tokens.map(token => token.code).join(" ")
     let values = tokens.map(token => token.math).join(" ")
 
     let values = eval(
@@ -135,9 +142,24 @@
         vars: state,
       ),
     )
-    let result = calc.round(eval(code, scope: (vars: state)), digits: precision)
+    let result = calc.round(eval(result, scope: (vars: state)), digits: precision)
 
-    $ equation = values = result $
+    (
+      variable: left-side.at(0).text,
+      result: result,
+      equation: $ equation = values = result $,
+    )
+  }
+
+  (equation, precision: 2) => {
+    vars.update(old => {
+      let (equation, variable, result) = stateless-run(old, equation, precision: precision)
+
+      old.insert(variable, result)
+      old.insert("eqrun-output", equation)
+      old
+    })
+    context vars.get().eqrun-output
   }
 }
 

@@ -6,9 +6,8 @@
 #import "./lib.typ": eqrun-builder
 
 #let vars = (
-  a-ok: 5.1,
-  b-broken: 6,
-  c: 7,
+  a: 5.1,
+  b-i: 6,
   Delta-tau: 1,
 )
 #let eqrun = eqrun-builder(vars)
@@ -17,4 +16,7 @@
 #vars
 
 = Calculation
-#eqrun($P = (a_"ok" + b_"broken" + sqrt(c)) / Delta_tau^5$)
+
+#eqrun($x = a + b_i$)
+#eqrun($c = 2 times x$)
+#eqrun($P = (a + b_i + sqrt(c)) / Delta_tau^5$)
