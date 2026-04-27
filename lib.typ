@@ -37,10 +37,15 @@
   }
 }
 #let parse-word(input) = {
-  if is-number(input) {
+  if is-number(input) or regex("[-+*]") in input.text {
     (
       code: input.text,
       math: input.text,
+    )
+  } else if input.text == "/" {
+    (
+      code: "/",
+      math: "\\/",
     )
   } else {
     (
@@ -86,15 +91,8 @@
         math: "(" + num.map(i => i.math).join(" ") + ")/(" + den.map(i => i.math).join(" ") + ")",
       )
     } else if token.text == "/" {
-      (
-        code: "/",
-        math: "\\/",
-      )
     } else {
-      (
-        code: token.text,
-        math: token.text,
-      )
+      parse-word(token)
     }
   }).flatten()
 }
