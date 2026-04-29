@@ -104,10 +104,10 @@
   }).flatten()
 }
 
-#let eqrun-builder(initial-state, debug: false) = {
+#let eqrun-builder(initial-state, debug: false, precision: 2) = {
   let vars = state("eqrun", initial-state)
 
-  let stateless-run(state, equation, precision: 2) = {
+  let stateless-run(state, equation, precision) = {
     let tokens = equation.body.children
 
     let (left-side, right-side) = {
@@ -162,7 +162,7 @@
     )
   }
 
-  (..args, precision: 2) => {
+  (..args, precision: precision) => {
     let equation = args.at(0, default: none)
 
     if equation == none {
@@ -170,7 +170,7 @@
     }
 
     vars.update(old => {
-      let (equation, variable, result) = stateless-run(old, equation, precision: precision)
+      let (equation, variable, result) = stateless-run(old, equation, precision)
 
       old.insert(variable, result)
       old.insert("eqrun-output", equation)

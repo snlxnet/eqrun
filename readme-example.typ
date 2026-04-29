@@ -26,4 +26,5 @@ Half of that is:
 
 #pagebreak()
 
-#eqrun($tau = 2.019 / 2$)
+Changing the precision:
+#eqrun($tau = 2.019 / 2$, precision: 4)

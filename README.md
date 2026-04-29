@@ -44,3 +44,12 @@ And get all the variables out of the runner:
 ]
 ```
 ![](./example_3.svg)
+
+You can also change how much it rounds, the default is 2.
+It can be specified in the `eqrun-builder` or here:
+```typst
+Changing the precision:
+#eqrun($tau = 2.019 / 2$, precision: 4)
+```
+
+![](./example_4.svg)
