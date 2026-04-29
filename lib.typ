@@ -136,6 +136,7 @@
 
     let tokens = parse-tokens(right-side)
     let result = tokens.map(token => token.code).join(" ")
+    let has-variables = "vars." in result
     let values = tokens.map(token => token.math).join(" ")
 
     let values = eval(
@@ -151,7 +152,11 @@
     (
       variable: left-side,
       result: result,
-      equation: $ equation = values = result $,
+      equation: if has-variables {
+        $ equation = values = result $
+      } else {
+        $ equation = result $
+      },
     )
   }
 

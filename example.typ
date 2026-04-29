@@ -18,6 +18,7 @@
 
 #let sli = "some long index"
 
+#eqrun($t = 2508 / 3$)
 #eqrun($x = a + b_i$)
 #eqrun($c_sli = 2 times x$)
 #eqrun($P = (a + b_i + sqrt(c_sli)) / Delta_tau^5$)
