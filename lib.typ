@@ -20,6 +20,8 @@
     sym-name(input.base.text)
   }
 
+  let name = name.replace(" ", "-")
+
   if not input.has("t") {
     return (code: name, math: "#cleanup(" + name + ")")
   }
@@ -54,8 +56,8 @@
     )
   } else {
     (
-      code: "vars." + input.text,
-      math: "#cleanup(vars." + input.text + ")",
+      code: "vars." + input.text.replace(" ", "-"),
+      math: "#cleanup(vars." + input.text.replace(" ", "-") + ")",
     )
   }
 }
