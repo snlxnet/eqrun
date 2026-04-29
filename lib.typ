@@ -155,7 +155,13 @@
     )
   }
 
-  (equation, precision: 2) => {
+  (..args, precision: 2) => {
+    let equation = args.at(0, default: none)
+
+    if equation == none {
+      return vars.get()
+    }
+
     vars.update(old => {
       let (equation, variable, result) = stateless-run(old, equation, precision: precision)
 
