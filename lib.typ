@@ -127,6 +127,8 @@
         left-side = ([result],)
       }
 
+      let left-side = parse-atom(left-side.at(0)).code.replace("vars.", "")
+
       (left-side, right-side)
     }
 
@@ -145,7 +147,7 @@
     let result = calc.round(eval(result, scope: (vars: state)), digits: precision)
 
     (
-      variable: left-side.at(0).text,
+      variable: left-side,
       result: result,
       equation: $ equation = values = result $,
     )

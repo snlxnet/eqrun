@@ -18,5 +18,5 @@
 = Calculation
 
 #eqrun($x = a + b_i$)
-#eqrun($c = 2 times x$)
-#eqrun($P = (a + b_i + sqrt(c)) / Delta_tau^5$)
+#eqrun($c_a = 2 times x$)
+#eqrun($P = (a + b_i + sqrt(c_a)) / Delta_tau^5$)
