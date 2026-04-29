@@ -1,4 +1,4 @@
-#let is-number(content) = regex("^\\d+$") in content.text
+#let is-number(content) = regex("^[.,\\d]+$") in content.text
 #let sym-name(symbol) = {
   import "./greek.typ": greek
 
@@ -104,7 +104,7 @@
   }).flatten()
 }
 
-#let eqrun-builder(initial-state) = {
+#let eqrun-builder(initial-state, debug: false) = {
   let vars = state("eqrun", initial-state)
 
   let stateless-run(state, equation, precision: 2) = {
@@ -139,15 +139,17 @@
     let has-variables = "vars." in result
     let values = tokens.map(token => token.math).join(" ")
 
-    let values = eval(
-      values,
-      mode: "math",
-      scope: (
-        cleanup: (val) => str(calc.round(val, digits: precision)),
-        vars: state,
-      ),
-    )
-    let result = calc.round(eval(result, scope: (vars: state)), digits: precision)
+    if not debug {
+      values = eval(
+        values,
+        mode: "math",
+        scope: (
+          cleanup: (val) => str(calc.round(val, digits: precision)),
+          vars: state,
+        ),
+      )
+      result = calc.round(eval(result, scope: (vars: state)), digits: precision)
+    }
 
     (
       variable: left-side,

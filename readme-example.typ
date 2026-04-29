@@ -23,3 +23,7 @@ Half of that is:
   A: #state.A\
   A triangle: #state.A-triangle
 ]
+
+#pagebreak()
+
+#eqrun($tau = 2.019 / 2$)
