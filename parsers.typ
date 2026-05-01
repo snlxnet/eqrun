@@ -1,31 +1,5 @@
 #import "./utils.typ"
 
-#let attach(input) = {
-  let name = "vars." + if input.has("b") {
-    utils.get-sym-name(input.base.text) + "-" + utils.get-sym-name(input.b.text)
-  } else {
-    utils.get-sym-name(input.base.text)
-  }
-
-  let name = name.replace(" ", "-")
-
-  if not input.has("t") {
-    return (code: name, math: "#cleanup(" + name + ")")
-  }
-
-  if is-number(input.t) {
-    (
-      code: "calc.pow(" + name + ", " + input.t.text + ")",
-      math: "#cleanup(" + name + ")^(" + input.t.text + ")",
-    )
-  } else {
-    (
-      code: name + "-" + utils.get-sym-name(input.t),
-      math: "#cleanup(" + name + "-" + utils.get-sym-name(input.t) + ")",
-    )
-  }
-}
-
 #let text(input) = {
   if utils.is-number(input) or regex("[-+]") in input.text {
     (
@@ -47,6 +21,32 @@
     (
       code: "vars." + name,
       math: "#cleanup(vars." + name + ")",
+    )
+  }
+}
+
+#let attach(input) = {
+  let name = if input.has("b") {
+    text(input.base).code + "-" + utils.get-sym-name(input.b.text)
+  } else {
+    text(input.base).code
+  }
+
+  let name = name.replace(" ", "-")
+
+  if not input.has("t") {
+    return (code: name, math: "#cleanup(" + name + ")")
+  }
+
+  if utils.is-number(input.t) {
+    (
+      code: "calc.pow(" + name + ", " + input.t.text + ")",
+      math: "#cleanup(" + name + ")^(" + input.t.text + ")",
+    )
+  } else {
+    (
+      code: name + "-" + utils.get-sym-name(input.t),
+      math: "#cleanup(" + name + "-" + utils.get-sym-name(input.t) + ")",
     )
   }
 }
