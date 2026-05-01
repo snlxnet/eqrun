@@ -13,15 +13,15 @@ The area of a rectangle with sides $#init.w times #init.h$:
 
 #pagebreak()
 
-Half of that is:
-#eqrun($A_"triangle" = A / 2$)
+Half of the square root of that is:
+#eqrun($A_"half sqrt" = sqrt(A) / 2$)
 
 #pagebreak()
 
 #context [
   #let state = eqrun()
   A: #state.A\
-  A triangle: #state.A-triangle
+  A triangle: #state.A-half-sqrt
 ]
 
 #pagebreak()
