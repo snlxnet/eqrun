@@ -25,7 +25,7 @@
   }
 }
 
-#let attach(input) = {
+#let attach(input, parse) = {
   let name = if input.has("b") {
     text(input.base).code + "-" + utils.get-sym-name(input.b.text)
   } else {
@@ -38,15 +38,23 @@
     return (code: name, math: "#cleanup(" + name + ")")
   }
 
-  if utils.is-number(input.t) {
-    (
-      code: "calc.pow(" + name + ", " + input.t.text + ")",
-      math: "#cleanup(" + name + ")^(" + input.t.text + ")",
-    )
+  if input.t.has("text") {
+    if utils.is-number(input.t) {
+      (
+        code: "calc.pow(" + name + ", " + input.t.text + ")",
+        math: "#cleanup(" + name + ")^(" + input.t.text + ")",
+      )
+    } else {
+      (
+        code: name + "-" + utils.get-sym-name(input.t.text),
+        math: "#cleanup(" + name + "-" + utils.get-sym-name(input.t.text) + ")",
+      )
+    }
   } else {
+    let t = utils.stringify(parse(input.t))
     (
-      code: name + "-" + utils.get-sym-name(input.t),
-      math: "#cleanup(" + name + "-" + utils.get-sym-name(input.t) + ")",
+      code: "calc.pow(" + name + ", " + t.code + ")",
+      math: "#cleanup(" + name + ")^(" + t.math + ")",
     )
   }
 }
@@ -61,19 +69,10 @@
   )
 }
 
-// undividable, either an attach or a word
-#let parse-atom(input) = {
-  if input.func() == math.attach {
-    attach(input)
-  } else {
-    text(input)
-  }
-}
-
 // root as in sqrt, not as in a tree of nodes
 #let root(input, parse) = {
-  let index = parse(if input.has("index") { input.index } else { [2] }).at(0)
-  let radicand = parse(input.radicand).at(0)
+  let index = utils.stringify(parse(if input.has("index") { input.index } else { [2] }))
+  let radicand = utils.stringify(parse(input.radicand))
 
   (
     code: "calc.root(" + radicand.code + ", " + index.code + ")",
@@ -88,7 +87,7 @@
 #let array(input) = {
   utils.to-array(input).filter(elem => elem != [ ]).map(token => {
     if token.func() == math.attach {
-      attach(token)
+      attach(token, array)
     } else if token.func() == math.root {
       root(token, array)
     } else if token.func() == math.frac {

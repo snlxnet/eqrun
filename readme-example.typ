@@ -28,3 +28,8 @@ Half of the square root of that is:
 
 Changing the precision:
 #eqrun($tau = 2.019 / 2$, precision: 4)
+
+#pagebreak()
+
+This also doesn't make it freak out:
+#eqrun($b^tau = 2^sqrt(A*2)$)

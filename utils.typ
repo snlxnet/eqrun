@@ -24,3 +24,9 @@
   }
 }
 
+#let stringify(array) = {
+  (
+    code: array.map(i => i.code).join(" "),
+    math: array.map(i => i.math).join(" "),
+  )
+}
