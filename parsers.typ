@@ -6,15 +6,15 @@
       code: input.text,
       math: input.text,
     )
-  } else if regex("[⋅∗×]") in input.text {
+  } else if regex("^[⋅∗×]$") in input.text {
     (
       code: "*",
       math: input.text,
     )
-  } else if input.text == "/" {
+  } else if regex("^[\/÷]$") in input.text {
     (
       code: "/",
-      math: "\\/",
+      math: input.text,
     )
   } else {
     let name = utils.get-sym-name(input.text.replace(" ", "-"))

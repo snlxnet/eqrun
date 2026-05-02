@@ -32,4 +32,4 @@ Changing the precision:
 #pagebreak()
 
 This also doesn't make it freak out:
-#eqrun($b^tau = 2^sqrt(A*2)$)
+#eqrun($b^tau = 2^sqrt(A div 6)$)
