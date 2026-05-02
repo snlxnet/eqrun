@@ -1,42 +1,38 @@
-#set text(font: "JetBrainsMono NF")
-#import "@preview/catppuccin:1.1.0": catppuccin, flavors
-#show: catppuccin.with(flavors.mocha)
-
+#set page(width: 10cm, height: 3cm)
+#set align(horizon + center)
 #import "./lib.typ": eqrun-builder
 
-#let vars = (
-  a: 5.1,
-  b-i: 6,
-  Delta-tau: 1,
+#let init = (
+  w: 6,
+  h: 7,
 )
-#let eqrun = eqrun-builder(vars)
+#let eqrun = eqrun-builder(init)
 
-= Given
-#vars
+The area of a rectangle with sides $#init.w times #init.h$:
+#eqrun($A = w dot h$)
 
-= Calculation
+#pagebreak()
 
-#let sli = "some long index"
+Half of the square root of that is:
+#eqrun($A_"half sqrt" = sqrt(A) / 2$)
 
-#eqrun($t = 2508 / 3$)
-#eqrun($x = a + b_i$)
-#eqrun($c_sli = 2 times x$)
-#eqrun($P = (a + b_i + sqrt(c_sli)) / Delta_tau^5$)
+#pagebreak()
 
-#context[
+#context [
   #let state = eqrun()
-  The calculated value is #text(fill: flavors.mocha.colors.green.rgb)[#state.P].
-  We can now use it as any normal variable.
-
-  For instance, here's a hexagon of that diameter:
-
-  #import "@preview/cetz:0.5.0"
-
-  #figure(
-    cetz.canvas({
-      import cetz.draw: *
-      polygon((0, 0), 6, radius: state.P/2, stroke: flavors.mocha.colors.lavender.rgb)
-    }),
-    caption: [A hexagon with $D = #state.P$]
-  )
+  A: #state.A\
+  A triangle: #state.A-half-sqrt
 ]
+
+#pagebreak()
+
+Changing the precision:
+#eqrun($tau = 2.019 / 2$, precision: 4)
+
+#pagebreak()
+
+This also doesn't make it freak out:
+#eqrun($b^tau = 2^sqrt(A div 6)$)
+
+#eqrun($c = b^tau + 2^A$)
+
