@@ -33,3 +33,6 @@ Changing the precision:
 
 This also doesn't make it freak out:
 #eqrun($b^tau = 2^sqrt(A div 6)$)
+
+#eqrun($c = b^tau + 2^A$)
+

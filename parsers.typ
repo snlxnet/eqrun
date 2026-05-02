@@ -19,8 +19,8 @@
   } else {
     let name = utils.get-sym-name(input.text.replace(" ", "-"))
     (
-      code: "vars." + name,
-      math: "#cleanup(vars." + name + ")",
+      code: name,
+      math: "#cleanup(" + name + ")",
     )
   }
 }

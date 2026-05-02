@@ -41,10 +41,10 @@
         mode: "math",
         scope: (
           cleanup: (val) => str(calc.round(val, digits: precision)),
-          vars: state,
+          ..state,
         ),
       )
-      result = calc.round(eval(result, scope: (vars: state)), digits: precision)
+      result = calc.round(eval(result, scope: state), digits: precision)
     }
 
     (
