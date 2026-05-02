@@ -1,6 +1,6 @@
 #set page(width: 10cm, height: 3cm)
 #set align(horizon + center)
-#import "./lib.typ": eqrun-builder
+#import "@preview/eqrun:0.1.0": eqrun-builder
 
 #let init = (
   w: 6,
@@ -14,14 +14,14 @@ The area of a rectangle with sides $#init.w times #init.h$:
 #pagebreak()
 
 Half of the square root of that is:
-#eqrun($A_"half sqrt" = sqrt(A) / 2$)
+#eqrun($A^tau_"half sqrt" = sqrt(A) / 2$)
 
 #pagebreak()
 
 #context [
   #let state = eqrun()
   A: #state.A\
-  A triangle: #state.A-half-sqrt
+  A triangle: #state.A-half-sqrt-tau
 ]
 
 #pagebreak()
@@ -31,8 +31,6 @@ Changing the precision:
 
 #pagebreak()
 
-This also doesn't make it freak out:
-#eqrun($b^tau = 2^sqrt(A div 6)$)
-
-#eqrun($c = b^tau + 2^A$)
+This also works:
+#eqrun($b^n = 2^sqrt(A div 6)$)
 

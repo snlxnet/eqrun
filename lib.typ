@@ -1,5 +1,5 @@
 #let eqrun-builder(initial-state, debug: false, precision: 2) = {
-  import "./parsers.typ"
+  import "parsers.typ"
 
   let vars = state("eqrun", initial-state)
 
