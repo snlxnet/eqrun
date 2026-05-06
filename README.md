@@ -8,7 +8,7 @@ Then you can use that variable as an input for the next equation.
 Create the runner providing the initial inputs:
 
 ```typst
-#import "@preview/eqrun:0.1.0": eqrun-builder
+#import "@preview/eqrun:0.1.1": eqrun-builder
 
 #let init = (
   w: 6,
@@ -19,10 +19,10 @@ Create the runner providing the initial inputs:
 The area of a rectangle with sides $#init.w times #init.h$:
 ```
 
-Write an equation and pass it to the runner:
+Write an equation and pass it to the runner, optionally specifying the unit:
 
 ```typst
-#eqrun($A = w dot h$)
+#eqrun($A = w dot h$, unit: $m^2$)
 ```
 ![Output of the example block that uses variables from init](./example_1.svg)
 
@@ -39,7 +39,7 @@ And get all the variables out of the runner:
 #context [
   #let state = eqrun()
   A: #state.A\
-  A triangle: #state.A-half-sqrt-tau
+  A half sqrt that: #state.A-half-sqrt-tau
 ]
 ```
 ![Output of the example block that shows how to get variables back from eqrun](./example_3.svg)
@@ -69,4 +69,13 @@ If you find something that doesn't work, please open an issue describing how to 
 You can also try running in debug mode to figure out what's wrong:
 ```typst
 #let eqrun = eqrun-builder(init, debug: true)
+```
+
+# Changelog
+
+## v0.1.1
+
+These work now:
+```typst
+
 ```

@@ -1,7 +1,7 @@
-#import "./utils.typ"
+#import "utils.typ"
 
 #let text(input) = {
-  if utils.is-number(input) or regex("[-+]") in input.text {
+  if utils.is-number(input) or regex("^[-+\s\(\)]+$") in input.text {
     (
       code: input.text,
       math: input.text,

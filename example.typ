@@ -1,6 +1,6 @@
 #set page(width: 10cm, height: 3cm)
 #set align(horizon + center)
-#import "@preview/eqrun:0.1.0": eqrun-builder
+#import "@preview/eqrun:0.1.1": eqrun-builder
 
 #let init = (
   w: 6,
@@ -9,7 +9,7 @@
 #let eqrun = eqrun-builder(init)
 
 The area of a rectangle with sides $#init.w times #init.h$:
-#eqrun($A = w dot h$)
+#eqrun($A = w dot h$, unit: $m^2$)
 
 #pagebreak()
 
@@ -21,7 +21,7 @@ Half of the square root of that is:
 #context [
   #let state = eqrun()
   A: #state.A\
-  A triangle: #state.A-half-sqrt-tau
+  A half sqrt that: #state.A-half-sqrt-tau
 ]
 
 #pagebreak()

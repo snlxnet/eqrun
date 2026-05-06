@@ -1,6 +1,6 @@
 [package]
 name = "eqrun"
-version = "0.1.0"
+version = "0.1.1"
 keywords = ["equation", "runner", "evaluation"]
 categories = ["scripting", "visualization", "utility"]
 entrypoint = "lib.typ"
